@@ -15,7 +15,7 @@
  *   node scripts/check.mjs --file path.md    指定文件
  *   node scripts/check.mjs --self-test       验证三态逻辑本身是对的
  */
-import { readFileSync, existsSync } from 'node:fs'
+import { readFileSync, existsSync, readdirSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -154,10 +154,35 @@ const verifyLinks = () => {
   process.exit(dead.length ? 1 : 0)
 }
 
+/** 交接材料必须带共同底座五项，且写出触发类型。缺一项就判 FAIL。 */
+const verifyHandoff = () => {
+  const dir = join(SKILL_ROOT, 'docs', 'handoff')
+  if (!existsSync(dir)) {
+    console.error('  缺 docs/handoff/ 目录 → 没有任何交接材料')
+    process.exit(1)
+  }
+  const files = readdirSync(dir).filter((name) => name.endsWith('.md')).sort()
+  if (files.length === 0) {
+    console.error('  docs/handoff/ 里没有 .md 交接材料')
+    process.exit(1)
+  }
+  const latest = files[files.length - 1]
+  const text = readFileSync(join(dir, latest), 'utf8')
+  const commons = ['任务目标', '基线', '相关文件', '待决问题', '自动验收']
+  const triggers = ['## 看效果', '## 卡住', '## 不满意']
+  const missingCommon = commons.filter((token) => !text.includes(token))
+  const trigger = triggers.find((token) => text.includes(token))
+  console.log(`  最新交接：${latest}`)
+  console.log(`  共同底座缺项：${missingCommon.length ? missingCommon.join(' / ') : '无'}`)
+  console.log(`  触发类型：${trigger ? trigger.replace('## ', '') : '缺失'}`)
+  process.exit(missingCommon.length === 0 && trigger ? 0 : 1)
+}
+
 if (has('--self-test')) selfTest()
 if (has('--verify-structure')) verifyStructure()
 if (has('--verify-template')) verifyTemplate()
 if (has('--verify-links')) verifyLinks()
+if (has('--verify-handoff')) verifyHandoff()
 
 const file = valueOf('--file') ?? 'ACCEPTANCE.md'
 const target = resolve(process.cwd(), file)

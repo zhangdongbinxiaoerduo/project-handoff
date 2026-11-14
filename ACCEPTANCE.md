@@ -10,7 +10,7 @@
 | A2 | 验收模板含「自动」「人工」「checks 围栏」三节 | 脚本退出码 0 |
 | A3 | 三态逻辑本身正确（PASS/FAIL/UNVERIFIED 与退出码 0/1/2） | 自检退出码 0 |
 | A4 | SKILL.md 里引用的路径没有死链 | 脚本退出码 0 |
-| A5 | 在真实项目上生成过一次交接材料 | **UNVERIFIED**（还没跑过） |
+| A5 | 交接材料带共同底座五项 + 触发类型 | 脚本退出码 0 |
 
 ## 人工
 
@@ -27,5 +27,5 @@
 {"id":"A2","run":"node scripts/check.mjs --verify-template"}
 {"id":"A3","run":"node scripts/check.mjs --self-test"}
 {"id":"A4","run":"node scripts/check.mjs --verify-links"}
-{"id":"A5","unverified":"还没在真实项目上跑过一次交接"}
+{"id":"A5","run":"node scripts/check.mjs --verify-handoff"}
 ```

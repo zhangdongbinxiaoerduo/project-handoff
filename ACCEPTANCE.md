@@ -11,6 +11,7 @@
 | A3 | 三态逻辑本身正确（PASS/FAIL/UNVERIFIED 与退出码 0/1/2） | 自检退出码 0 |
 | A4 | SKILL.md 里引用的路径没有死链 | 脚本退出码 0 |
 | A5 | 交接材料带共同底座五项 + 触发类型 | 脚本退出码 0 |
+| A6 | 意见单模板 + 权限边界（只有人批准才能改标准） | 脚本退出码 0 |
 
 ## 人工
 
@@ -28,4 +29,5 @@
 {"id":"A3","run":"node scripts/check.mjs --self-test"}
 {"id":"A4","run":"node scripts/check.mjs --verify-links"}
 {"id":"A5","run":"node scripts/check.mjs --verify-handoff"}
+{"id":"A6","run":"node scripts/check.mjs --verify-intake"}
 ```

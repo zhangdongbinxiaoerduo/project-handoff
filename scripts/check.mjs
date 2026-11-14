@@ -178,11 +178,34 @@ const verifyHandoff = () => {
   process.exit(missingCommon.length === 0 && trigger ? 0 : 1)
 }
 
+/** 意见单模板 + 权限边界必须存在，否则外部意见没有入口。 */
+const verifyIntake = () => {
+  const intake = join(SKILL_ROOT, 'references', 'opinion-intake.md')
+  const skill = join(SKILL_ROOT, 'SKILL.md')
+  const problems = []
+  if (!existsSync(intake)) problems.push('缺 references/opinion-intake.md')
+  else {
+    const text = readFileSync(intake, 'utf8')
+    const need = ['意见单', '依据', '是否阻塞', '候选替代']
+    const missing = need.filter((token) => !text.includes(token))
+    if (missing.length) problems.push(`意见单缺字段：${missing.join(' / ')}`)
+  }
+  if (!existsSync(skill)) problems.push('缺 SKILL.md')
+  else {
+    const text = readFileSync(skill, 'utf8')
+    if (!text.includes('权限边界')) problems.push('SKILL.md 没有权限边界')
+    if (!text.includes('只有人批准')) problems.push('SKILL.md 没写「只有人批准」')
+  }
+  console.log(`  意见单与权限边界：${problems.length ? problems.join('；') : '齐全'}`)
+  process.exit(problems.length ? 1 : 0)
+}
+
 if (has('--self-test')) selfTest()
 if (has('--verify-structure')) verifyStructure()
 if (has('--verify-template')) verifyTemplate()
 if (has('--verify-links')) verifyLinks()
 if (has('--verify-handoff')) verifyHandoff()
+if (has('--verify-intake')) verifyIntake()
 
 const file = valueOf('--file') ?? 'ACCEPTANCE.md'
 const target = resolve(process.cwd(), file)

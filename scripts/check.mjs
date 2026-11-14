@@ -200,12 +200,29 @@ const verifyIntake = () => {
   process.exit(problems.length ? 1 : 0)
 }
 
+/** 工作流手册必须存在，且覆盖全部步骤与轻量走法。 */
+const verifyWorkflow = () => {
+  const doc = join(SKILL_ROOT, 'docs', 'workflow.md')
+  if (!existsSync(doc)) {
+    console.error('  缺 docs/workflow.md → 只有协议，没有用法')
+    process.exit(1)
+  }
+  const text = readFileSync(doc, 'utf8')
+  const steps = ['第 0 步', '第 1 步', '第 2 步', '第 3 步', '第 4 步', '第 5 步', '第 6 步']
+  const missingSteps = steps.filter((token) => !text.includes(token))
+  const missingOther = ['轻量模式', '意见单'].filter((token) => !text.includes(token))
+  const missing = [...missingSteps, ...missingOther]
+  console.log(`  工作流步骤缺项：${missing.length ? missing.join(' / ') : '无'}`)
+  process.exit(missing.length ? 1 : 0)
+}
+
 if (has('--self-test')) selfTest()
 if (has('--verify-structure')) verifyStructure()
 if (has('--verify-template')) verifyTemplate()
 if (has('--verify-links')) verifyLinks()
 if (has('--verify-handoff')) verifyHandoff()
 if (has('--verify-intake')) verifyIntake()
+if (has('--verify-workflow')) verifyWorkflow()
 
 const file = valueOf('--file') ?? 'ACCEPTANCE.md'
 const target = resolve(process.cwd(), file)

@@ -12,6 +12,7 @@
 | A4 | SKILL.md 里引用的路径没有死链 | 脚本退出码 0 |
 | A5 | 交接材料带共同底座五项 + 触发类型 | 脚本退出码 0 |
 | A6 | 意见单模板 + 权限边界（只有人批准才能改标准） | 脚本退出码 0 |
+| A7 | 工作流手册覆盖第 0~6 步 + 轻量走法 | 脚本退出码 0 |
 
 ## 人工
 
@@ -30,4 +31,5 @@
 {"id":"A4","run":"node scripts/check.mjs --verify-links"}
 {"id":"A5","run":"node scripts/check.mjs --verify-handoff"}
 {"id":"A6","run":"node scripts/check.mjs --verify-intake"}
+{"id":"A7","run":"node scripts/check.mjs --verify-workflow"}
 ```
